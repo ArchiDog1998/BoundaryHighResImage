@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+    <TargetFrameworks>net7.0-windows</TargetFrameworks>
+    <Version>1.0</Version>
+    <Title>BoundaryHighResImage</Title>
+    <Description>Description of BoundaryHighResImage</Description>
+    <TargetExt>.gha</TargetExt>
+	  <LangVersion>latest</LangVersion>
+	  <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  
+  <ItemGroup>
+	  <PackageReference Include="Grasshopper" Version="8.8.24163.12481" />
+	  <PackageReference Include="Lib.Harmony" Version="2.3.3" />
+	  <PackageReference Include="SimpleGrasshopper" Version="1.8.2" />
+  </ItemGroup>
+</Project>
