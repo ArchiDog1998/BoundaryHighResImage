@@ -11,7 +11,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-	  <PackageReference Include="Clowd.Clipboard.Gdi" Version="1.0.1" />
 	  <PackageReference Include="Grasshopper" Version="8.8.24163.12481" />
 	  <PackageReference Include="Lib.Harmony" Version="2.3.3" />
 	  <PackageReference Include="SimpleGrasshopper" Version="1.8.2" />

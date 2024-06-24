@@ -1,10 +1,10 @@
-﻿using Clowd.Clipboard;
-using Grasshopper;
+﻿using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI.Canvas.Interaction;
 using Grasshopper.Kernel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -92,8 +92,17 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
         }
         else
         {
-            using var handle = await ClipboardGdi.OpenAsync();
-            handle.SetImage(bitmap);
+            using var ms = new MemoryStream();
+
+            bitmap.Save(ms, ImageFormat.Png);
+
+            IDataObject dataObj = new DataObject();
+            dataObj.SetData("PNG", ms);
+            dataObj.SetData(DataFormats.Dib, Clipboard.GetData(DataFormats.Dib));
+            dataObj.SetData("Format17", Clipboard.GetData("Format17"));
+            dataObj.SetData("Bitmap", Clipboard.GetData("Bitmap"));
+
+            Clipboard.SetDataObject(dataObj, true);
         }
     }
 }
