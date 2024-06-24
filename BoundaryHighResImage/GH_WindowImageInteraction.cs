@@ -1,20 +1,13 @@
-﻿using Grasshopper;
+﻿using Clowd.Clipboard;
+using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI.Canvas.Interaction;
 using Grasshopper.Kernel;
-using Microsoft.VisualBasic.CompilerServices;
-using Newtonsoft.Json.Bson;
-using Rhino;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BoundaryHighResImage;
 internal class GH_WindowImageInteraction : GH_AbstractInteraction
@@ -37,7 +30,7 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
     {
         if (m_selbox.Width != 0 || m_selbox.Height != 0)
         {
-            SolidBrush solidBrush = new SolidBrush(Color.FromArgb(150, Color.BlueViolet));
+            using SolidBrush solidBrush = new (Color.FromArgb(150, Color.LightSkyBlue));
             sender.Graphics.FillRectangle(solidBrush, m_selbox);
             solidBrush.Dispose();
         }
@@ -67,11 +60,11 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
             return GH_ObjectResponse.Release;
         }
 
-        Capture();
+        Instances.ActiveCanvas.Invoke(Capture);
         return GH_ObjectResponse.Release;
     }
 
-    private void Capture()
+    private async void Capture()
     {
         var zoom = Data.ZoomFactor;
         var viewport = new GH_Viewport
@@ -95,11 +88,12 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
 
             if (dialog.ShowDialog() != DialogResult.OK) return;
 
-            Task.Run(() => bitmap.Save(dialog.FileName));
+            await Task.Run(() => bitmap.Save(dialog.FileName));
         }
         else
         {
-            Clipboard.SetImage(bitmap);
+            using var handle = await ClipboardGdi.OpenAsync();
+            handle.SetImage(bitmap);
         }
     }
 }
