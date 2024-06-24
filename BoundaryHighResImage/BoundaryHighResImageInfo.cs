@@ -8,7 +8,7 @@ using System.Drawing;
 namespace BoundaryHighResImage;
 public class BoundaryHighResImageInfo : GH_AssemblyInfo
 {
-    public override string Name => "BoundaryHighResImage";
+    public override string Name => "Boundary Hi-Res Image";
 
     //Return a 24x24 pixel bitmap to represent this GHA library.
     public override Bitmap Icon => null;
@@ -16,7 +16,7 @@ public class BoundaryHighResImageInfo : GH_AssemblyInfo
     //Return a short string describing the purpose of this GHA library.
     public override string Description => "";
 
-    public override Guid Id => new Guid("2c5f0c76-645b-4037-a4cb-79d100f2e4be");
+    public override Guid Id => new ("2c5f0c76-645b-4037-a4cb-79d100f2e4be");
 
     //Return a string identifying you or your company.
     public override string AuthorName => "";
@@ -27,6 +27,10 @@ public class BoundaryHighResImageInfo : GH_AssemblyInfo
 
 partial class SimpleAssemblyPriority
 {
+    protected override int? MenuIndex => 0;
+
+    protected override int InsertIndex => 10;
+
     protected override void DoWithEditor(GH_DocumentEditor editor)
     {
         var harmony = new Harmony("Grasshopper.BoundaryHighResImage");
