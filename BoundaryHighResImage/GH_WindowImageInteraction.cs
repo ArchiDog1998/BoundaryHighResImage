@@ -60,23 +60,27 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
             return GH_ObjectResponse.Release;
         }
 
-        Instances.ActiveCanvas.Invoke(Capture);
+        Task.Run(() => Capture(m_selbox));
         return GH_ObjectResponse.Release;
     }
 
-    private async void Capture()
+    private static void Capture(Rectangle rect)
     {
+        var canvas = Instances.ActiveCanvas;
+        if (canvas == null) return;
+
         var zoom = Data.ZoomFactor;
         var viewport = new GH_Viewport
         {
-            Width = (int)(m_selbox.Width * zoom),
-            Height = (int)(m_selbox.Height * zoom),
+            Width = (int)(rect.Width * zoom),
+            Height = (int)(rect.Height * zoom),
             Zoom = zoom,
-            Tx = -(int)(m_selbox.X * zoom),
-            Ty = -(int)(m_selbox.Y * zoom)
+            Tx = -(int)(rect.X * zoom),
+            Ty = -(int)(rect.Y * zoom)
         };
         viewport.ComputeProjection();
-        var bitmap = Canvas.GenerateHiResImageTile(viewport, Data.CanvasColor);
+
+        var bitmap = canvas.Invoke(() => canvas.GenerateHiResImageTile(viewport, Data.CanvasColor));
 
         if (Data.Save)
         {
@@ -88,7 +92,7 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
 
             if (dialog.ShowDialog() != DialogResult.OK) return;
 
-            await Task.Run(() => bitmap.Save(dialog.FileName));
+            bitmap.Save(dialog.FileName);
         }
         else
         {
@@ -102,7 +106,7 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
             dataObj.SetData("Format17", Clipboard.GetData("Format17"));
             dataObj.SetData("Bitmap", Clipboard.GetData("Bitmap"));
 
-            Clipboard.SetDataObject(dataObj, true);
+            canvas.Invoke(() => Clipboard.SetDataObject(dataObj, true));
         }
     }
 }
