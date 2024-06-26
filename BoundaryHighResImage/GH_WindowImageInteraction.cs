@@ -104,9 +104,13 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
             dataObj.SetData("PNG", ms);
             dataObj.SetData(DataFormats.Dib, Clipboard.GetData(DataFormats.Dib));
             dataObj.SetData("Format17", Clipboard.GetData("Format17"));
-            dataObj.SetData("Bitmap", Clipboard.GetData("Bitmap"));
+            dataObj.SetData(DataFormats.Bitmap, true, bitmap);
 
-            canvas.Invoke(() => Clipboard.SetDataObject(dataObj, true));
+            canvas.Invoke(() =>
+            {
+                Clipboard.SetDataObject(dataObj, true);
+                Instances.DocumentEditor.SetStatusBarEvent(new GH_RuntimeMessage("Captured the image to the clipboard."));
+            });
         }
     }
 }
