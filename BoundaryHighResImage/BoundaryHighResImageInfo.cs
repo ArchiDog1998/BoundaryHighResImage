@@ -1,7 +1,7 @@
-﻿using Grasshopper;
-using Grasshopper.GUI;
+﻿using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using HarmonyLib;
+using SimpleGrasshopper.Util;
 using System;
 using System.Drawing;
 
@@ -11,10 +11,10 @@ public class BoundaryHighResImageInfo : GH_AssemblyInfo
     public override string Name => "Boundary Hi-Res Image";
 
     //Return a 24x24 pixel bitmap to represent this GHA library.
-    public override Bitmap Icon => null;
+    public override Bitmap Icon => typeof(BoundaryHighResImageInfo).Assembly.GetBitmap("icon24.png");
 
     //Return a short string describing the purpose of this GHA library.
-    public override string Description => "Create a hi-res image asap.";
+    public override string Description => "Create a hi-res image asap. Icon was created by Dorman.";
 
     public override Guid Id => new ("2c5f0c76-645b-4037-a4cb-79d100f2e4be");
 
