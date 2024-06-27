@@ -23,6 +23,8 @@ public class BoundaryHighResImageInfo : GH_AssemblyInfo
 
     //Return a string representing your preferred contact details.
     public override string AuthorContact => "1123993881@qq.com";
+
+    public override string Version => typeof(BoundaryHighResImageInfo).Assembly.GetName().Version?.ToString() ?? "unknown";
 }
 
 partial class SimpleAssemblyPriority
