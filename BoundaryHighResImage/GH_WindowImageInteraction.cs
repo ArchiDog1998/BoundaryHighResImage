@@ -3,6 +3,8 @@ using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI.Canvas.Interaction;
 using Grasshopper.Kernel;
+using Rhino.Display;
+using Rhino;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -80,7 +82,7 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
         };
         viewport.ComputeProjection();
 
-        var bitmap = canvas.Invoke(() => canvas.GenerateHiResImageTile(viewport, Data.CanvasColor));
+        var bitmap = canvas.Invoke(() => Capture(canvas, viewport));
 
         if (Data.Save)
         {
@@ -112,5 +114,43 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
                 Instances.DocumentEditor.SetStatusBarEvent(new GH_RuntimeMessage("Captured the image to the clipboard."));
             });
         }
+    }
+
+    private static Bitmap Capture(GH_Canvas canvas, GH_Viewport vp)
+    {
+        var grasshopper = canvas.GenerateHiResImageTile(vp, Data.CanvasColor);
+        if (!Data.RhinoView) return grasshopper;
+
+        var capture = new ViewCapture
+        {
+            TransparentBackground = Data.TrasnparentBg,
+            DrawGridAxes = Data.DrawGridAxes,
+            DrawGrid = Data.DrawGrid,
+            DrawAxes = Data.DrawAxes
+        };
+
+        var view = RhinoDoc.ActiveDoc.Views.ActiveView;
+
+        capture.Height = grasshopper.Height;
+        capture.Width = (int)(capture.Height * Data.Ratio switch
+        {
+            Ratio.R4_3 => 4 / 3f,
+            Ratio.R16_9 => 16 / 9f,
+            _ => 1,
+        });
+
+        var rhino = capture.CaptureToBitmap(view);
+
+        var bitmap = new Bitmap(grasshopper.Width + rhino.Width, grasshopper.Height);
+        var g = Graphics.FromImage(bitmap);
+
+        g.DrawImage(grasshopper, new Point(0, 0));
+        if (!Data.TrasnparentBg)
+        {
+            g.FillRectangle(new SolidBrush(Data.CanvasColor), new Rectangle(new Point(grasshopper.Width, 0), new Size(rhino.Width, rhino.Height)));
+        }
+        g.DrawImage(rhino, new Point(grasshopper.Width, 0));
+
+        return bitmap;
     }
 }
