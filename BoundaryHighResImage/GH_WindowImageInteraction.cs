@@ -86,15 +86,18 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
 
         if (Data.Save)
         {
-            var dialog = new SaveFileDialog()
+            canvas.Invoke(() =>
             {
-                Title = "Saving Path",
-                Filter = "image files (*.png)|*.png",
-            };
+                var dialog = new SaveFileDialog()
+                {
+                    Title = "Saving Path",
+                    Filter = "image files (*.png)|*.png",
+                };
 
-            if (dialog.ShowDialog() != DialogResult.OK) return;
+                if (dialog.ShowDialog() != DialogResult.OK) return;
 
-            bitmap.Save(dialog.FileName);
+                bitmap.Save(dialog.FileName);
+            });
         }
         else
         {
