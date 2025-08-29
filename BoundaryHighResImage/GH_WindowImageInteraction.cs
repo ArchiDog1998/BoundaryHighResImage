@@ -12,9 +12,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BoundaryHighResImage;
+
 internal class GH_WindowImageInteraction : GH_AbstractInteraction
 {
     private Rectangle m_selbox;
+
     public GH_WindowImageInteraction(GH_Canvas canvas, GH_CanvasMouseEvent mEvent)
         : base(canvas, mEvent)
     {
@@ -32,7 +34,7 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
     {
         if (m_selbox.Width != 0 || m_selbox.Height != 0)
         {
-            using SolidBrush solidBrush = new (Color.FromArgb(150, Color.LightSkyBlue));
+            using SolidBrush solidBrush = new(Color.FromArgb(150, Color.LightSkyBlue));
             sender.Graphics.FillRectangle(solidBrush, m_selbox);
             solidBrush.Dispose();
         }
@@ -45,8 +47,10 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
         {
             return GH_ObjectResponse.Ignore;
         }
+
         base.Canvas.HideMRUPanels();
-        m_selbox = Rectangle.Union(new Rectangle(GH_Convert.ToPoint(m_canvas_mousedown), new Size(0, 0)), new Rectangle(GH_Convert.ToPoint(e.CanvasLocation), new Size(0, 0)));
+        m_selbox = Rectangle.Union(new Rectangle(GH_Convert.ToPoint(m_canvas_mousedown), new Size(0, 0)),
+            new Rectangle(GH_Convert.ToPoint(e.CanvasLocation), new Size(0, 0)));
         sender.Refresh();
         return GH_ObjectResponse.Handled;
     }
@@ -57,12 +61,25 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
         {
             return GH_ObjectResponse.Release;
         }
+
         if (!sender.IsDocument)
         {
             return GH_ObjectResponse.Release;
         }
 
-        Task.Run(() => Capture(m_selbox));
+        Task.Run(() =>
+        {
+            DrawIncomingPatch.CapturingRange = m_selbox;
+            try
+            {
+                Capture(m_selbox);
+            }
+            finally
+            {
+                DrawIncomingPatch.CapturingRange = null;
+                Instances.ActiveCanvas.Invoke(Instances.ActiveCanvas.Refresh);
+            }
+        });
         return GH_ObjectResponse.Release;
     }
 
@@ -114,7 +131,8 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
             canvas.Invoke(() =>
             {
                 Clipboard.SetDataObject(dataObj, true);
-                Instances.DocumentEditor.SetStatusBarEvent(new GH_RuntimeMessage("Captured the image to the clipboard."));
+                Instances.DocumentEditor.SetStatusBarEvent(
+                    new GH_RuntimeMessage("Captured the image to the clipboard."));
             });
         }
     }
@@ -150,8 +168,10 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
         g.DrawImage(grasshopper, new Point(0, 0));
         if (!Data.TrasnparentBg)
         {
-            g.FillRectangle(new SolidBrush(Data.CanvasColor), new Rectangle(new Point(grasshopper.Width, 0), new Size(rhino.Width, rhino.Height)));
+            g.FillRectangle(new SolidBrush(Data.CanvasColor),
+                new Rectangle(new Point(grasshopper.Width, 0), new Size(rhino.Width, rhino.Height)));
         }
+
         g.DrawImage(rhino, new Point(grasshopper.Width, 0));
 
         return bitmap;

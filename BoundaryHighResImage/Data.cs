@@ -21,6 +21,9 @@ internal static partial class Data
     [Setting, Config("Save")]
     private static readonly bool _Save = false;
 
+    [Setting, Config("OutSideWire Wires")]
+    private static readonly OutsideWireType _WireType = OutsideWireType.KeepIt;
+
     [Setting, Config("AddRhinoView")]
     private static readonly bool _RhinoView = false;
 
@@ -38,6 +41,13 @@ internal static partial class Data
 
     [Setting, Config("Draw Axes", parent: "AddRhinoView")]
     private static readonly bool _DrawAxes = false;
+}
+
+internal enum OutsideWireType : byte
+{
+    KeepIt,
+    Hide,
+    Remove,
 }
 
 internal enum Ratio : byte
