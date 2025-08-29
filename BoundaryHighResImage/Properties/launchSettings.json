@@ -3,7 +3,11 @@
     "BoundaryHighResImage": {
       "commandName": "Executable",
       "executablePath": "C:\\Program Files\\Rhino 8\\System\\Rhino.exe",
-      "commandLineArgs": ""
+      "commandLineArgs": "/netcore /runscript=\"_Grasshopper\"",
+      "workingDirectory": "$(ProjectDir)bin\\Debug\\net7.0-windows\\",
+      "environmentVariables": {
+        "RHINO_PACKAGE_DIRS": "$(ProjectDir)bin\\Debug\\net7.0-windows\\"
+      }
     }
   }
 }
