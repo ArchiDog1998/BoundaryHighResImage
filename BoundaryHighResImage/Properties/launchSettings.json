@@ -8,6 +8,15 @@
       "environmentVariables": {
         "RHINO_PACKAGE_DIRS": "$(ProjectDir)bin\\Debug\\net7.0-windows\\"
       }
+    },
+    "Rhino 7": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Rhino 7\\System\\Rhino.exe",
+      "commandLineArgs": "/runscript=\"_Grasshopper\"",
+      "workingDirectory": "$(ProjectDir)bin\\Debug\\net48\\",
+      "environmentVariables": {
+        "RHINO_PACKAGE_DIRS": "$(ProjectDir)bin\\Debug\\net48\\"
+      }
     }
   }
 }

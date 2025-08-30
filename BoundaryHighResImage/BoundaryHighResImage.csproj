@@ -1,19 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	
-  <PropertyGroup>
-    <TargetFrameworks>net7.0-windows</TargetFrameworks>
-    <Version>1.0.3</Version>
-    <Title>BoundaryHighResImage</Title>
-    <Description>Description of BoundaryHighResImage</Description>
-    <TargetExt>.gha</TargetExt>
-	  <LangVersion>latest</LangVersion>
-	  <UseWindowsForms>true</UseWindowsForms>
-  </PropertyGroup>
-  
-  <ItemGroup>
-	  <PackageReference Include="Grasshopper" Version="8.8.24163.12481" />
-	  <PackageReference Include="Lib.Harmony" Version="2.4.1" />
-	  <PackageReference Include="SimpleGrasshopper" Version="1.8.6" />
-	  <EmbeddedResource Include="Icons\*.png"/>
-  </ItemGroup>
+
+    <PropertyGroup>
+        <TargetFrameworks>net48;net7.0-windows</TargetFrameworks>
+        <Version>1.0.3</Version>
+        <Title>BoundaryHighResImage</Title>
+        <Description>Description of BoundaryHighResImage</Description>
+        <TargetExt>.gha</TargetExt>
+        <LangVersion>latest</LangVersion>
+        <UseWindowsForms>true</UseWindowsForms>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grasshopper" Version="8.0.23304.9001"  Condition="'$(TargetFramework)' != 'net48'"/>
+        <PackageReference Include="Grasshopper" Version="7.4.21067.13001"  Condition="'$(TargetFramework)' == 'net48'"/>
+        <PackageReference Include="Lib.Harmony" Version="2.4.1"/>
+        <PackageReference Include="SimpleGrasshopper" Version="1.8.6"/>
+        <EmbeddedResource Include="Icons\*.png"/>
+    </ItemGroup>
 </Project>

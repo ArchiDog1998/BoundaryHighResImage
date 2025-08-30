@@ -4,6 +4,7 @@ using HarmonyLib;
 using SimpleGrasshopper.Util;
 using System;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace BoundaryHighResImage;
 public class BoundaryHighResImageInfo : GH_AssemblyInfo

@@ -1,4 +1,5 @@
-﻿using Grasshopper;
+﻿using System;
+using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI.Canvas.Interaction;
@@ -99,11 +100,15 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
         };
         viewport.ComputeProjection();
 
-        var bitmap = canvas.Invoke(() => Capture(canvas, viewport));
+        var bitmap =
+#if NET48
+            (Bitmap)
+#endif
+            canvas.Invoke(() => Capture(canvas, viewport));
 
         if (Data.Save)
         {
-            canvas.Invoke(() =>
+            canvas.Invoke((Action)(() =>
             {
                 var dialog = new SaveFileDialog()
                 {
@@ -114,7 +119,7 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
                 if (dialog.ShowDialog() != DialogResult.OK) return;
 
                 bitmap.Save(dialog.FileName);
-            });
+            }));
         }
         else
         {
