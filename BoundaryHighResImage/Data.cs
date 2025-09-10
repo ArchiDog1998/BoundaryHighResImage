@@ -24,6 +24,10 @@ internal static partial class Data
     [Setting, Config("OutSideWire Wires")]
     private static readonly OutsideWireType _WireType = OutsideWireType.KeepIt;
 
+    [Range(0, 500, 1)]
+    [Setting, Config("OutSideWire Range")]
+    private static readonly float _WireRange = 30;
+
     [Setting, Config("AddRhinoView")]
     private static readonly bool _RhinoView = false;
 

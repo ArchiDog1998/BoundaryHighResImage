@@ -1,10 +1,10 @@
-﻿using Grasshopper.GUI;
+﻿using System.Windows.Forms;
+using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 using Grasshopper.GUI.Canvas.Interaction;
 using HarmonyLib;
-using System.Windows.Forms;
 
-namespace BoundaryHighResImage;
+namespace BoundaryHighResImage.Patches;
 
 [HarmonyPatch(typeof(GH_Canvas))]
 internal class CanvasPatch

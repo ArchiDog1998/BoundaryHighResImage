@@ -11,12 +11,13 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BoundaryHighResImage.Patches;
 
 namespace BoundaryHighResImage;
 
 internal class GH_WindowImageInteraction : GH_AbstractInteraction
 {
-    private Rectangle m_selbox;
+    private Rectangle _selectionBox;
 
     public GH_WindowImageInteraction(GH_Canvas canvas, GH_CanvasMouseEvent mEvent)
         : base(canvas, mEvent)
@@ -26,19 +27,16 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
 
     public override void Destroy()
     {
-        base.Canvas.ShowMRUPanels();
+        Canvas.ShowMRUPanels();
         m_canvas.CanvasPaintBackground -= Canvas_PaintBackGround;
         base.Destroy();
     }
 
     private void Canvas_PaintBackGround(GH_Canvas sender)
     {
-        if (m_selbox.Width != 0 || m_selbox.Height != 0)
-        {
-            using SolidBrush solidBrush = new(Color.FromArgb(150, Color.LightSkyBlue));
-            sender.Graphics.FillRectangle(solidBrush, m_selbox);
-            solidBrush.Dispose();
-        }
+        if (_selectionBox is { Width: 0, Height: 0 }) return;
+        using SolidBrush solidBrush = new(Color.FromArgb(150, Color.LightSkyBlue));
+        sender.Graphics.FillRectangle(solidBrush, _selectionBox);
     }
 
     public override GH_ObjectResponse RespondToMouseMove(GH_Canvas sender, GH_CanvasMouseEvent e)
@@ -49,8 +47,8 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
             return GH_ObjectResponse.Ignore;
         }
 
-        base.Canvas.HideMRUPanels();
-        m_selbox = Rectangle.Union(new Rectangle(GH_Convert.ToPoint(m_canvas_mousedown), new Size(0, 0)),
+        Canvas.HideMRUPanels();
+        _selectionBox = Rectangle.Union(new Rectangle(GH_Convert.ToPoint(m_canvas_mousedown), new Size(0, 0)),
             new Rectangle(GH_Convert.ToPoint(e.CanvasLocation), new Size(0, 0)));
         sender.Refresh();
         return GH_ObjectResponse.Handled;
@@ -58,22 +56,17 @@ internal class GH_WindowImageInteraction : GH_AbstractInteraction
 
     public override GH_ObjectResponse RespondToMouseUp(GH_Canvas sender, GH_CanvasMouseEvent e)
     {
-        if (!m_active)
-        {
-            return GH_ObjectResponse.Release;
-        }
-
-        if (!sender.IsDocument)
+        if (!m_active || !sender.IsDocument)
         {
             return GH_ObjectResponse.Release;
         }
 
         Task.Run(() =>
         {
-            DrawIncomingPatch.CapturingRange = m_selbox;
+            DrawIncomingPatch.CapturingRange = _selectionBox;
             try
             {
-                Capture(m_selbox);
+                Capture(_selectionBox);
             }
             finally
             {
